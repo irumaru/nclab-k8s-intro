@@ -1,25 +1,41 @@
+# コメント
+# APIバージョンを指定
 apiVersion: apps/v1
+# Deploymentリソースについて記述
 kind: Deployment
 metadata:
+  # deploymentの名前を指定
   name: http-deployment
+  # デプロイするnamespaceを指定
   namespace: http-test
 spec:
+  # Podのレプリカ数を指定
   replicas: 2
+  # app: httpラベルのついたpodをreplicas個複製
   selector:
     matchLabels:
       app: http
+  # [Intro範囲外]Podのアップデート戦略に関する設定
   strategy:
+    # アップデートの種類にRollingUpdateを指定
     type: RollingUpdate
     rollingUpdate:
+      # アップデート実行のため、maxSurge個はreplicasを超えてpodを一時作成
       maxSurge: 1
+  # 複製対象のPodに関する設定
   template:
     metadata:
+      # Podのラベルにapp: httpを指定
       labels:
         app: http
     spec:
       containers:
+      # docker hubのnginx:latestイメージを使用
       - image: nginx:latest
+        # コンテナ名にnginxを指定
         name: nginx
+      # [Intro範囲外]app: httpラベルの付いたPodを同じNodeに配置しない
+      # いづれかのノードが停止したときに、replicaしているPodが全て停止しないようにするため。
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -31,6 +47,8 @@ spec:
                       - http
               topologyKey: "kubernetes.io/hostname"
 ---
+# [Intro範囲外]Podを最低1つは実行しておく
+# 条件を満たさない場合は、drain時にエラー(wait)になる
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:

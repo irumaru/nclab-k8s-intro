@@ -4,10 +4,16 @@ metadata:
   name: http-service
   namespace: http-test
 spec:
+  # SreviceのタイプにLoadBalancerを指定
+  # 外部からアクセスできるIPを割り当てる
   type: LoadBalancer
+  # app: httpラベルの付いているPodにルーティングする
   selector:
     app: http
   ports:
+    # tcpプロトコルを使用
     - protocol: TCP
+      # 80番ポートで待ち受け
       port: 80
+      # 80番ポートへルーティング
       targetPort: 80
