@@ -1,0 +1,56 @@
+# version 0.6
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+  - ssh:
+      address: 192.168.120.2
+      user: ubuntu
+      port: 22
+      keyPath: /home/ilts/.ssh/maruru
+    role: controller
+  - ssh:
+      address: 192.168.120.3
+      user: ubuntu
+      port: 22
+      keyPath: /home/ilts/.ssh/maruru
+    role: controller
+  - ssh:
+      address: 192.168.120.4
+      user: ubuntu
+      port: 22
+      keyPath: /home/ilts/.ssh/maruru
+    role: controller
+  - ssh:
+      address: 192.168.120.5
+      user: ubuntu
+      port: 22
+      keyPath: /home/ilts/.ssh/maruru
+    role: worker
+  - ssh:
+      address: 192.168.120.6
+      user: ubuntu
+      port: 22
+      keyPath: /home/ilts/.ssh/maruru
+    role: worker
+  k0s:
+    version: 1.27.6+k0s.0
+    dynamicConfig: false
+    config:
+      spec:
+        network:
+          provider: "calico"
+          calico:
+            mode: "bird"
+          podCIDR: "10.243.0.0/16"
+          serviceCIDR: "10.112.0.0/12"
+          dualStack:
+            enabled: true
+            IPv6podCIDR: "fd3b:15a9:3b12:112::/108"
+            IPv6serviceCIDR: "fd3b:15a9:3b12:113::/108"
+        api:
+          externalAddress: 192.168.120.7
+          sans:
+          - 192.168.120.7

@@ -1,0 +1,13 @@
+# 使用するHelmレポジトリを指定する
+repositories:
+  - name: metallb
+    url: https://metallb.github.io/metallb
+
+# リリースに必要な設定値を指定する
+releases:
+  - name: metallb
+    namespace: metallb
+    chart: metallb/metallb
+    version: 0.13.11
+    #values:
+    #  - "./values.yaml"

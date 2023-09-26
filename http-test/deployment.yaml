@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-deployment
+  namespace: http-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: http
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: http
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - http
+              topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: http-pdb
+  namespace: http-test
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: http
