@@ -2,14 +2,21 @@
 apiVersion: k0sctl.k0sproject.io/v1beta1
 kind: Cluster
 metadata:
+  # クラスター名
   name: k0s-cluster
 spec:
+  # クラスターのホストに関する設定
   hosts:
   - ssh:
+      # このホストのIPアドレスを指定
       address: 192.168.120.2
+      # このホストのユーザー名を指定
       user: ubuntu
+      # このホストのsshポート番号を指定
       port: 22
+      # このホストにk8sをデプロイするために必要な秘密鍵ファイルの指定
       keyPath: /home/ilts/.ssh/maruru
+    # このホストの役割 controller or worker or controller+worker 
     role: controller
   - ssh:
       address: 192.168.120.3
@@ -35,22 +42,34 @@ spec:
       port: 22
       keyPath: /home/ilts/.ssh/maruru
     role: worker
+  # クラスターのカスタム設計
   k0s:
+    # k0sバージョンを指定(k8sのバージョンもここで決まる)
     version: 1.27.6+k0s.0
     dynamicConfig: false
     config:
       spec:
         network:
+          # CNIにcalicoを指定
+          # calicoはノード間通信の暗号化やIPv6など、高機能である
           provider: "calico"
           calico:
+            # ノード間通信をトンネリングしない(ルーターモードで動作)ので軽量
             mode: "bird"
+          # PodのIPレンジ
           podCIDR: "10.243.0.0/16"
+          # ServiceのIPレンジ
           serviceCIDR: "10.112.0.0/12"
           dualStack:
+            # デュアルスタックモード(IPv4とIPv6を両方使用)
             enabled: true
+            # PodのIPレンジ
             IPv6podCIDR: "fd3b:15a9:3b12:112::/108"
+            # ServiceのIPレンジ
             IPv6serviceCIDR: "fd3b:15a9:3b12:113::/108"
         api:
+          # KubeAPIのロードバランサーのアドレス
           externalAddress: 192.168.120.7
+          # KubeAPIのロードバランサー用の証明書をプッシュするアドレス
           sans:
           - 192.168.120.7
