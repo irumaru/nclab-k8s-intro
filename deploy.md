@@ -1,7 +1,7 @@
 # 必要なマシン
 コントロールプレーンとなるUbuntuServerを3台用意  
 ワーカーノードとなるUbuntuServerを2台用意  
-ロードバランサーとなるUbuntuServer(コンテナでも可)を1台用意
+ロードバランサーとなるUbuntuServer(コンテナでも可)を1台用意  
 管理・デプロイ用にUbuntuServerを1台用意 
 
 # クラスターのデプロイ方法
